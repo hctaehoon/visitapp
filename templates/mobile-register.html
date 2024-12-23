@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASDMT 방문자 등록</title>
+    <link rel="stylesheet" href="/static/mobile-style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="site-header">
+            <img src="/static/images/dmt_logo.png" alt="DMT Logo" class="logo">
+            <h1>ASDMT 방문자 등록(모바일)</h1>
+        </header>
+        <form id="mobileVisitorForm">
+            <div class="form-group">
+                <label for="company">업체명</label>
+                <select id="company" required></select>
+            </div>
+            <div class="form-group">
+                <label for="name">성명</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="form-group">
+                <label for="position">직급</label>
+                <select id="position" required></select>
+            </div>
+            <div class="form-group">
+                <label for="contact">연락처</label>
+                <input type="tel" id="contact" placeholder="010xxxxxxxx">
+            </div>
+            <div class="form-group">
+                <label for="visit_location">방문장소</label>
+                <select id="visit_location" required></select>
+            </div>
+            <div class="form-group">
+                <label for="visit_purpose">방문목적</label>
+                <select id="visit_purpose" required></select>
+            </div>
+            <div class="form-group">
+                <label for="department">담당부서</label>
+                <select id="department" required></select>
+            </div>
+            <div class="form-group">
+                <label for="manager">담당자</label>
+                <select id="manager" required></select>
+            </div>
+            <button type="submit">등록</button>
+        </form>
+    </div>
+    <script src="/static/mobile-app.js"></script>
+</body>
+</html> 

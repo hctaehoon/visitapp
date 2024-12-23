@@ -1,0 +1,734 @@
+/* 글꼴 추가 */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+:root {
+    --primary: #0052CC;
+    --secondary: #00875A;
+    --warning: #FF8B00;
+    --danger: #DE350B;
+    --background: #F4F5F7;
+    --surface: #FFFFFF;
+    --text-primary: #172B4D;
+    --text-secondary: #5E6C84;
+    --border: #DFE1E6;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    line-height: 1.6;
+    background-color: var(--background);
+    color: var(--text-primary);
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 헤더 스타일 */
+.site-header {
+    margin-bottom: 30px;
+    background: linear-gradient(to right, #f4f5f7, #ffffff);  /* 부드러운 그라데이션 배경 */
+    padding: 15px 0;
+    border-radius: 12px;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.logo {
+    height: 35px;
+    width: auto;
+    object-fit: contain;
+    mix-blend-mode: multiply;  /* 로고 배경을 자연스럽게 블렌드 */
+    filter: brightness(1);  /* 로고 밝기 약간 조정 */
+    opacity: 0.9;  /* 투명도 살짝 조정 */
+}
+
+h1 {
+    color: var(--text-primary);
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* 메인 컨텐츠 */
+.main-content {
+    display: grid;
+    grid-template-columns: 500px 1fr;
+    gap: 20px;
+}
+
+.left-panel, .right-panel {
+    background: var(--surface);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* 폼 스타일 */
+.form-section {
+    margin-bottom: 30px;
+    background: var(--surface);
+    padding: 24px;
+    border-radius: 12px;
+}
+
+.form-section h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+}
+
+.compact-form .form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 16px;
+}
+
+.form-group {
+    flex: 1;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #FAFBFC;
+    transition: all 0.2s ease;
+}
+
+input:focus, select:focus {
+    background-color: white;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(0,82,204,0.1);
+}
+
+button {
+    background-color: var(--primary);
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    width: 100%;
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    background-color: #0747A6;
+}
+
+/* 테이블 스타일 */
+.table-container {
+    margin-top: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background-color: #F4F5F7;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+/* 방문자 카드 스타일 */
+.visitor-card {
+    background: var(--surface);
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+}
+
+.visitor-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(9,30,66,0.1);
+}
+
+.visitor-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.visitor-info strong {
+    color: var(--text-primary);
+    font-size: 16px;
+}
+
+.visitor-info .position {
+    color: var(--text-secondary);
+    font-size: 14px;
+    background: var(--background);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.visit-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+}
+
+.location {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--primary);
+    font-size: 14px;
+}
+
+.location::before {
+    content: "📍";  /* 위치 아이콘 */
+    font-size: 16px;
+}
+
+.duration {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--secondary);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.duration::before {
+    content: "⏱️";  /* 시간 아이콘 */
+    font-size: 16px;
+}
+
+/* 상태 그리드 레이아웃 */
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+/* 기존 스타일 유지하면서 추가된 부분만 현대적으로 수정 */
+.checkout-btn {
+    background-color: var(--danger);
+}
+
+.checkout-btn:hover {
+    background-color: #BE2E0B;
+}
+
+.completed-btn {
+    background-color: var(--secondary) !important;
+}
+
+.export-btn {
+    background-color: var(--secondary);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.export-btn:hover {
+    background-color: #006644;
+}
+
+/* 모달 스타일 */
+.modal-content {
+    border-radius: 12px;
+    background: var(--surface);
+    padding: 24px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1200px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 등록 버튼 스타일 */
+.form-section button[type="submit"] {
+    height: 45px;
+    font-size: 18px;
+    font-weight: 600;
+    background-color: #2E5EAA;
+    margin-top: 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.form-section button[type="submit"]:hover {
+    background-color: #1E4A94;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* 모달 스타일 개선 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(9, 30, 66, 0.54);  /* 배경 어둡게 */
+    z-index: 1000;
+    backdrop-filter: blur(2px);  /* 배경 블러 효과 */
+}
+
+.modal-content {
+    position: relative;
+    background-color: var(--surface);
+    margin: 15% auto;
+    padding: 24px;
+    width: 400px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(9, 30, 66, 0.25);
+}
+
+/* 모달 내부 스타일 */
+.modal h3 {
+    color: var(--text-primary);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.modal .form-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.modal .form-buttons button {
+    height: 40px;
+}
+
+/* 모달 버튼 스타일 */
+.confirm-btn {
+    background-color: var(--primary);
+}
+
+.cancel-btn {
+    background-color: var(--text-secondary);
+}
+
+/* 알림 모달 스타일 */
+.alert-modal .modal-content {
+    width: 350px;
+    text-align: center;
+}
+
+.alert-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.alert-message {
+    font-size: 16px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+/* 아이콘 색상 */
+.alert-icon.success {
+    color: var(--secondary);
+}
+
+.alert-icon.warning {
+    color: var(--warning);
+}
+
+.alert-icon.error {
+    color: var(--danger);
+}
+
+/* 이중 입실 모달 스타일 */
+.duplicate-info {
+    background-color: var(--background);
+    padding: 12px;
+    border-radius: 6px;
+    margin: 16px 0;
+}
+
+.reason-select {
+    margin-top: 16px;
+}
+
+.reason-select p {
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+#customReason {
+    margin-top: 8px;
+}
+
+/* 기존 버튼 스타일 유지 */
+.export-btn {
+    height: 40px;
+    background-color: var(--secondary);
+}
+
+.checkout-btn {
+    height: 36px;
+    background-color: var(--danger);
+}
+
+.completed-btn {
+    height: 36px;
+    background-color: var(--secondary) !important;
+    opacity: 0.8;
+}
+
+/* 방문 목적 통계 스타일 개선 */
+.purpose-ranking {
+    background: var(--surface);
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 24px;
+}
+
+.purpose-ranking h3 {
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.ranking-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 8px;
+    background: #F4F5F7;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+}
+
+.ranking-item:hover {
+    transform: translateX(4px);
+}
+
+.rank {
+    font-weight: 600;
+    color: var(--primary);
+    margin-right: 12px;
+    min-width: 24px;
+}
+
+.purpose {
+    flex: 1;
+    color: var(--text-primary);
+}
+
+.count {
+    background: var(--primary);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* 업체별 통계 스타일 개선 */
+.company-analytics {
+    margin-top: 24px;
+}
+
+.company-analytics h3 {
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.analytics-card {
+    background: var(--surface);
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    transition: all 0.2s ease;
+}
+
+.analytics-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(9,30,66,0.1);
+}
+
+.company-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.visit-count {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--primary);
+    margin: 8px 0;
+}
+
+.current-visitors {
+    color: var(--secondary);
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.total-duration {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.longest-visitor {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.visitor-name {
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.visitor-duration {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+/* 부서/담당자 선택 영역 스타일 */
+.form-row:last-child {
+    display: grid;
+    grid-template-columns: 2fr 1fr;  /* 부서/담당자 영역 2, 버튼 영역 1 비율 */
+    gap: 20px;
+    margin-bottom: 0;
+}
+
+.form-row:last-child .form-group:first-child {
+    display: flex;
+    gap: 10px;
+}
+
+.form-row:last-child select {
+    height: 45px;  /* 셀렉트 박스 높이 */
+}
+
+/* 부서/담당자 선택 영역 레이아웃 */
+#department {
+    flex: 1;
+}
+
+#manager {
+    flex: 1.5;  /* 담당자 선택이 더 넓게 */
+}
+
+/* 현재 입실 현황 섹션 스타일 개선 */
+.current-status {
+    margin-top: 30px;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(9,30,66,0.1);
+}
+
+.status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--background);
+}
+
+.status-header h3 {
+    font-size: 18px;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#currentVisitorCount {
+    background: var(--primary);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 16px;
+}
+
+.current-time {
+    background: var(--background);
+    padding: 8px 16px;
+    border-radius: 8px;
+    color: var(--primary);
+    font-weight: 500;
+    font-size: 16px;
+}
+
+/* 연락처 입력 필드 스타일 */
+input[type="tel"] {
+    letter-spacing: 1px;  /* 숫자 간격 조정 */
+}
+
+input[type="tel"]:invalid {
+    border-color: var(--danger);
+}
+
+input[type="tel"]:placeholder-shown {
+    border-color: var(--border);  /* placeholder 표시 중일 때는 기본 테두리 색상 */
+}
+
+/* 유효성 검사 메시지 스타일 */
+input[type="tel"]:invalid:not(:placeholder-shown)::after {
+    content: "11자 숫자로 입력해주세요";
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    font-size: 12px;
+    color: var(--danger);
+}
+
+.no-current-visitors {
+    text-align: center;
+    padding: 20px;
+    background: var(--background);
+    border-radius: 8px;
+    color: var(--text-secondary);
+}
+
+/* 업체 추가 모달 스타일 */
+#addCompanyModal .modal-content {
+    width: 450px;
+    padding: 30px;
+}
+
+#addCompanyModal h3 {
+    font-size: 20px;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+    text-align: center;
+    font-weight: 600;
+}
+
+#addCompanyForm .form-group {
+    margin-bottom: 20px;
+}
+
+#addCompanyForm input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.2s ease;
+    background-color: #FAFBFC;
+}
+
+#addCompanyForm input:focus {
+    border-color: var(--primary);
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(0,82,204,0.1);
+}
+
+#addCompanyForm .form-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+#addCompanyForm .form-buttons button {
+    flex: 1;
+    height: 44px;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+#addCompanyForm .form-buttons button[type="submit"] {
+    background-color: var(--primary);
+}
+
+#addCompanyForm .form-buttons button[type="submit"]:hover {
+    background-color: #0747A6;
+    transform: translateY(-1px);
+}
+
+#addCompanyForm .form-buttons .cancel-btn {
+    background-color: #EBECF0;
+    color: var(--text-primary);
+}
+
+#addCompanyForm .form-buttons .cancel-btn:hover {
+    background-color: #DFE1E6;
+}
+
+/* 모달 애니메이션 */
+.modal-content {
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 모달 배경 애니메이션 */
+.modal {
+    animation: modalBackgroundFadeIn 0.2s ease;
+}
+
+@keyframes modalBackgroundFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

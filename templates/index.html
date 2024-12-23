@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMT 내방 방명록</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="site-header">
+            <div class="header-content">
+                <img src="/static/images/dmt_logo.png" alt="DMT Logo" class="logo">
+                <h1>AS DMT 내방 방명록</h1>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="form-section">
+                    <h2>방문자 등록</h2>
+                    <form id="visitorForm" class="compact-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <select id="company" required>
+                                    <option value="">업체명 선택</option>
+                                    <option value="add">+ 업체 추가</option>
+                                </select>
+                                <input type="text" id="companyInput" placeholder="업체명 입력" style="display: none;">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="name" placeholder="성명" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <select id="position" required>
+                                    <option value="">직급 선택</option>
+                                    <option value="manual">직접 입력</option>
+                                </select>
+                                <input type="text" id="positionInput" placeholder="직급 입력" style="display: none;">
+                            </div>
+                            <div class="form-group">
+                                <input type="tel" id="contact" placeholder="01012345678" pattern="[0-9]{11}" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11);" title="핸드폰 번호는 11자리 숫자로 입력해주세요 (예: 01012345678)">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <select id="visit_location" required>
+                                    <option value="">방문장소 선택</option>
+                                    <option value="manual">직접 입력</option>
+                                </select>
+                                <input type="text" id="locationInput" placeholder="방문장소 입력" style="display: none;">
+                            </div>
+                            <div class="form-group">
+                                <select id="visit_purpose" required>
+                                    <option value="">방문목적 선택</option>
+                                    <option value="manual">직접 입력</option>
+                                </select>
+                                <input type="text" id="purposeInput" placeholder="방문목적 입력" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <select id="department" required>
+                                    <option value="">부서 선택</option>
+                                </select>
+                                <select id="manager" required>
+                                    <option value="">담당자 선택</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit">등록</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="calendar-section">
+                    <h2>방문 기록 조회</h2>
+                    <div class="date-controls">
+                        <div class="date-picker-wrapper">
+                            <i class="calendar-icon">📅</i>
+                            <input type="text" id="datePicker" placeholder="날짜 선택">
+                        </div>
+                        <button id="exportBtn" class="export-btn">
+                            <i class="download-icon">📥</i>
+                            CSV 저장
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="visitors-list">
+                    <div class="list-header">
+                        <h2>금일 방문자 현황 (<span id="currentDate"></span>)</h2>
+                        <div class="search-box">
+                            <input type="text" id="visitorSearch" placeholder="이름으로 검색...">
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="visitorsTable">
+                            <thead>
+                                <tr>
+                                    <th>업체명</th>
+                                    <th>성명</th>
+                                    <th>방문장소</th>
+                                    <th>담당자</th>
+                                    <th>입실시간</th>
+                                    <th>퇴실시간</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="currentVisitorsList">
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <!-- 8개 더 추가 -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="current-status">
+                        <div class="status-header">
+                            <h3>현재 입실 인원 현황 (<span id="currentVisitorCount">0</span>명)</h3>
+                            <div class="current-time" id="currentTime"></div>
+                        </div>
+                        <div class="status-grid" id="currentVisitorStatus">
+                        </div>
+                    </div>
+
+                    <div class="company-analytics">
+                        <h3>업체별 방문 통계</h3>
+                        <div class="analytics-grid" id="companyAnalytics">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
+    <script src="/static/app.js"></script>
+    <!-- 모달 추가 -->
+    <div id="addCompanyModal" class="modal">
+        <div class="modal-content">
+            <h3>새 업체 등록</h3>
+            <form id="addCompanyForm">
+                <div class="form-group">
+                    <input type="text" 
+                           id="newCompanyName" 
+                           placeholder="업체명을 입력해주세요" 
+                           required 
+                           autocomplete="off"
+                           maxlength="50">
+                </div>
+                <div class="form-buttons">
+                    <button type="submit">등록하기</button>
+                    <button type="button" class="cancel-btn" onclick="closeModal('addCompanyModal')">취소</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- 알림 모달 추가 -->
+    <div id="alertModal" class="modal alert-modal">
+        <div class="modal-content alert-content">
+            <div class="alert-icon">✓</div>
+            <div class="alert-message">입실이 완료되었습니다.</div>
+        </div>
+    </div>
+    <!-- 퇴실 확인 모달 -->
+    <div id="checkoutConfirmModal" class="modal">
+        <div class="modal-content alert-content">
+            <div class="alert-icon">❓</div>
+            <div class="alert-message">퇴실 처리하시겠습니까?</div>
+            <div class="form-buttons">
+                <button onclick="confirmCheckout()" class="confirm-btn">확인</button>
+                <button onclick="closeModal('checkoutConfirmModal')" class="cancel-btn">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 퇴실 완료 모달 -->
+    <div id="checkoutCompleteModal" class="modal alert-modal">
+        <div class="modal-content alert-content">
+            <div class="alert-icon">✓</div>
+            <div class="alert-message">퇴실 처리가 완료되었습니다.</div>
+        </div>
+    </div>
+    <!-- 에러 알림 모달 추가 -->
+    <div id="errorModal" class="modal alert-modal">
+        <div class="modal-content alert-content">
+            <div class="alert-icon error">❌</div>
+            <div class="alert-message error-message"></div>
+        </div>
+    </div>
+    <!-- 이중 입실 처리 모달 추가 -->
+    <div id="duplicateVisitorModal" class="modal">
+        <div class="modal-content alert-content">
+            <div class="alert-icon warning">⚠️</div>
+            <div class="alert-message">이미 입실한 방문자입니다.</div>
+            <div class="duplicate-info">
+                <p>마지막 입실 시간: <span id="lastCheckInTime"></span></p>
+            </div>
+            <div class="reason-select">
+                <p>재입실 사유:</p>
+                <select id="duplicateReason" required>
+                    <option value="">사유 선택</option>
+                    <option value="missed_checkout">퇴실 누락</option>
+                    <option value="custom">직접 입력</option>
+                </select>
+                <input type="text" id="customReason" placeholder="재입실 사유 입력" style="display: none;">
+            </div>
+            <div class="form-buttons">
+                <button onclick="handleDuplicateVisitor()" class="confirm-btn">확인</button>
+                <button onclick="closeModal('duplicateVisitorModal')" class="cancel-btn">취소</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
