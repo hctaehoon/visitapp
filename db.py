@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 class VisitorDB:
     def __init__(self):
-        self.db_path = 'visitor_log.db'
+        self.db_path = '/var/www/visitapp/visitor_log.db'
         self.create_tables()
 
     def get_connection(self):

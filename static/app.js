@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         try {
-            const checkResponse = await fetch('/api/visitors/check-duplicate', {
+            const checkResponse = await fetch('/visit/api/visitors/check-duplicate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showDuplicateVisitorModal(checkResult.existingVisitor, formData);
             } else {
                 // 일반 등록 처리
-                const response = await fetch('/api/visitors', {
+                const response = await fetch('/visit/api/visitors', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const month = date.getMonth() + 1;
         
         try {
-            const response = await fetch(`/api/export/${year}/${month}`);
+            const response = await fetch(`/visit/api/export/${year}/${month}`);
             const blob = await response.blob();
             
             const url = window.URL.createObjectURL(blob);
@@ -146,6 +146,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // SSE 설정
     setupSSE();
+    // 날짜 변경 감지 
+    setupDateChangeDetection();
 });
 
 async function loadVisitorsByDate(date) {
@@ -168,7 +170,7 @@ async function loadVisitorsByDate(date) {
             }
         }
 
-        const response = await fetch(`/api/visitors/${formattedDate}`);
+        const response = await fetch(`/visit/api/visitors/${formattedDate}`);
         if (!response.ok) {
             throw new Error('Failed to load visitors');
         }
@@ -198,7 +200,7 @@ async function loadVisitorsByDate(date) {
 
 async function loadCurrentVisitors() {
     try {
-        const response = await fetch('/api/current-visitors');
+        const response = await fetch('/visit/api/current-visitors');
         const visitors = await response.json();
         
         // 현재 날짜로 헤더 업데이트
@@ -211,6 +213,14 @@ async function loadCurrentVisitors() {
             });
         
         updateVisitorsTable(visitors, today);
+
+ 	// 현재 입실 인원 현황 업데이트
+	const currentVisitors = visitors.filter(v => !v[9]); // 퇴실하지 않은 방문자만
+        updateCurrentVisitorStatus(currentVisitors);
+                // 통계 업데이트 (새로 추가)
+        updateCompanyAnalytics();
+        updateVisitPurposeRanking();
+
     } catch (error) {
         console.error('Error:', error);
     }
@@ -264,7 +274,35 @@ function updateVisitorsTable(visitors, selectedDate = new Date()) {
         updateVisitPurposeRanking();
     }
 }
+// 날짜 변경 함수
+function setupDateChangeDetection() {
+    let currentDate = new Date().toDateString();
+    
+    // 1분마다 날짜 변경 체크
+    setInterval(() => {
+        const newDate = new Date().toDateString();
+        if (newDate !== currentDate) {
+            console.log('Date changed from', currentDate, 'to', newDate);
+            currentDate = newDate;
+            
+            // 날짜 표시 업데이트
+            document.getElementById('currentDate').textContent = 
+                new Date().toLocaleDateString('ko-KR', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
 
+            // 방문자 목록 새로고침
+            loadCurrentVisitors();
+            
+            // Flatpickr 달력 날짜도 업데이트
+            if (datePicker) {
+                datePicker.setDate(new Date());
+            }
+        }
+    }, 60000); // 1분마다 체크
+}
 // 시간 포맷팅 헬퍼 함수 추가
 function formatDuration(minutes) {
     if (minutes < 60) {
@@ -315,7 +353,7 @@ function updateCurrentVisitorStatus(currentVisitors) {
 // 업체별 통계 업데이트 함수 수정
 async function updateCompanyAnalytics() {
     try {
-        const response = await fetch('/api/analytics/companies');
+        const response = await fetch('/visit/api/analytics/companies');
         const companies = await response.json();
         
         const analyticsContainer = document.getElementById('companyAnalytics');
@@ -349,7 +387,7 @@ async function updateCompanyAnalytics() {
 
 async function updateVisitPurposeRanking() {
     try {
-        const response = await fetch('/api/analytics/purposes');
+        const response = await fetch('/visit/api/analytics/purposes');
         const purposes = await response.json();
         
         const rankingHtml = `
@@ -393,7 +431,7 @@ async function confirmCheckout() {
     if (!currentCheckoutId) return;
     
     try {
-        const response = await fetch(`/api/visitors/${currentCheckoutId}/checkout`, {
+        const response = await fetch(`/visit/api/visitors/${currentCheckoutId}/checkout`, {
             method: 'POST'
         });
 
@@ -441,7 +479,7 @@ function isSameDay(date1, date2) {
 async function initializeSelectOptions() {
     try {
         // 업체명 옵션 로드
-        const companies = await fetch('/api/options/companies').then(r => r.json());
+        const companies = await fetch('/visit/api/options/companies').then(r => r.json());
         const companySelect = document.getElementById('company');
         companies.forEach(company => {
             const option = new Option(company, company);
@@ -449,7 +487,7 @@ async function initializeSelectOptions() {
         });
 
         // 직급 옵션 로드
-        const positions = await fetch('/api/options/positions').then(r => r.json());
+        const positions = await fetch('/visit/api/options/positions').then(r => r.json());
         const positionSelect = document.getElementById('position');
         positions.forEach(position => {
             const option = new Option(position, position);
@@ -457,7 +495,7 @@ async function initializeSelectOptions() {
         });
 
         // 방문장소 옵션 로드
-        const locations = await fetch('/api/options/locations').then(r => r.json());
+        const locations = await fetch('/visit/api/options/locations').then(r => r.json());
         const locationSelect = document.getElementById('visit_location');
         locations.forEach(location => {
             const option = new Option(location, location);
@@ -465,7 +503,7 @@ async function initializeSelectOptions() {
         });
 
         // 방문목적 옵션 로드
-        const purposes = await fetch('/api/options/purposes').then(r => r.json());
+        const purposes = await fetch('/visit/api/options/purposes').then(r => r.json());
         const purposeSelect = document.getElementById('visit_purpose');
         purposes.forEach(purpose => {
             const option = new Option(purpose, purpose);
@@ -536,7 +574,7 @@ function setupManagerSelect() {
 
     async function loadDepartments() {
         try {
-            const response = await fetch('/api/options/departments');
+            const response = await fetch('/visit/api/options/departments');
             const departments = await response.json();
             console.log("Received departments:", departments);  // 받은 부서 데이터 확인
             
@@ -561,7 +599,7 @@ function setupManagerSelect() {
         if (!selectedId) return;
 
         try {
-            const response = await fetch(`/api/managers/department/${selectedId}`);
+            const response = await fetch(`/visit/api/managers/department/${selectedId}`);
             const managers = await response.json();
             console.log("Received managers:", managers);  // 받은 담당자 데이터 확인
             
@@ -590,7 +628,7 @@ function setupVisitorAutoComplete() {
 
         if (company && name) {
             try {
-                const response = await fetch(`/api/visitor-history?company=${encodeURIComponent(company)}&name=${encodeURIComponent(name)}`);
+                const response = await fetch(`/visit/api/visitor-history?company=${encodeURIComponent(company)}&name=${encodeURIComponent(name)}`);
                 const history = await response.json();
 
                 if (history) {
@@ -654,7 +692,7 @@ function setupCompanyAdd() {
         const newCompanyName = document.getElementById('newCompanyName').value.trim();
 
         try {
-            const response = await fetch('/api/options/companies', {
+            const response = await fetch('/visit/api/options/companies', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -668,7 +706,7 @@ function setupCompanyAdd() {
                 alert(result.message);
                 
                 // 업체 목록 새로고침
-                const companies = await fetch('/api/options/companies').then(r => r.json());
+                const companies = await fetch('/visit/api/options/companies').then(r => r.json());
                 const companySelect = document.getElementById('company');
                 
                 // 기존 옵션 제거 (첫 번째와 마지막 옵션 제외)
@@ -785,7 +823,7 @@ function showDuplicateVisitorModal(existingVisitor, newVisitorData) {
 // 퇴실 누락 목록 로드 함수 추가
 async function loadMissedCheckouts() {
     try {
-        const response = await fetch('/api/missed-checkouts');
+        const response = await fetch('/visit/api/missed-checkouts');
         const missedCheckouts = await response.json();
         
         const tbody = document.getElementById('missedCheckoutsList');
@@ -828,7 +866,7 @@ async function handleDuplicateVisitor() {
         }
 
         // 기존 방문자 퇴실 처리 및 누락 기록
-        const missedResponse = await fetch(`/api/visitors/${duplicateVisitorId}/missed-checkout`, {
+        const missedResponse = await fetch(`/visit/api/visitors/${duplicateVisitorId}/missed-checkout`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -849,7 +887,7 @@ async function handleDuplicateVisitor() {
         }
 
         // 새로운 방문자 등록
-        const response = await fetch('/api/visitors', {
+        const response = await fetch('/visit/api/visitors', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -901,7 +939,7 @@ function setupSSE() {
         window.eventSource.close();
     }
     
-    window.eventSource = new EventSource('/api/sse');
+    window.eventSource = new EventSource('/visit/api/sse');
     
     window.eventSource.onmessage = function(event) {
         const visitors = JSON.parse(event.data);

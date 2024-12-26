@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DMT 내방 방명록</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/visit/static/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 </head>
@@ -13,7 +13,7 @@
     <div class="container">
         <header class="site-header">
             <div class="header-content">
-                <img src="/static/images/dmt_logo.png" alt="DMT Logo" class="logo">
+                <img src="/visit/static/images/dmt_logo.png" alt="DMT Logo" class="logo">
                 <h1>AS DMT 내방 방명록</h1>
             </div>
         </header>
@@ -159,7 +159,7 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
-    <script src="/static/app.js"></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
     <!-- 모달 추가 -->
     <div id="addCompanyModal" class="modal">
         <div class="modal-content">

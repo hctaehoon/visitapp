@@ -15,10 +15,22 @@ from collections import defaultdict
 import threading
 from queue import Queue, Empty
 import os
+from werkzeug.middleware.proxy_fix import ProxyFix
 
-app = Flask(__name__)
+app = Flask(__name__, 
+           static_url_path='/visit/static',  # static URL 경로
+           static_folder='static')           # static 폴더 위치
+
+app.config['APPLICATION_ROOT'] = '/visit'
+app.wsgi_app = ProxyFix(app.wsgi_app)
+
 CORS(app)
 db = VisitorDB()
+
+# 디버그 로그 추가
+print(f"Database initialized at: {db.db_path}")
+print(f"Static URL path: {app.static_url_path}")
+print(f"Static folder: {app.static_folder}")
 
 # 더 큰 캐시와 긴 TTL
 visitors_cache = TTLCache(maxsize=100, ttl=5)  # 5초 TTL
@@ -54,8 +66,13 @@ def adjust_column_width(worksheet):
         adjusted_width = max(max_length + 2, 10)
         worksheet.column_dimensions[column_letter].width = adjusted_width
 
+# URL prefix 처리를 위한 함수
+def get_prefix():
+    return app.config['APPLICATION_ROOT']
+
 @app.route('/')
 def index():
+    print(f"Serving index page from {get_prefix()}")  # 디버그 로그
     return render_template('index.html')
 
 @app.route('/api/visitors', methods=['POST'])
@@ -106,8 +123,13 @@ def checkout_visitor(visitor_id):
 
 @app.route('/api/current-visitors', methods=['GET'])
 def get_current_visitors():
-    visitors = db.get_current_visitors()
-    return jsonify(visitors)
+    try:
+        visitors = db.get_current_visitors()
+        print(f"Retrieved visitors: {visitors}")  # 디버그 로그
+        return jsonify(visitors)
+    except Exception as e:
+        print(f"Error getting visitors: {e}")  # 에러 로그
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/stats/managers', methods=['GET'])
 def get_manager_stats():
@@ -125,9 +147,13 @@ def get_visitors_by_date(date):
         # 날짜 형식 검증
         datetime.strptime(date, '%Y-%m-%d')
         visitors = db.get_visitors_by_date(date)
+        print(f"Retrieved visitors for {date}: {visitors}")  # 디버그 로그
         return jsonify(visitors)
     except ValueError:
         return jsonify({'error': '잘못된 날짜 형식입니다.'}), 400
+    except Exception as e:
+        print(f"Error getting visitors for {date}: {e}")  # 에러 로그
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/export/<int:year>/<int:month>', methods=['GET'])
 def export_excel(year, month):
@@ -213,7 +239,13 @@ def get_purpose_ranking():
 
 @app.route('/api/options/companies', methods=['GET'])
 def get_companies():
-    return jsonify(db.get_companies())
+    try:
+        companies = db.get_companies()
+        print(f"Companies API response: {companies}")  # 디버그 로그
+        return jsonify(companies)
+    except Exception as e:
+        print(f"Error in companies API: {str(e)}")  # 에러 로그
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/options/positions', methods=['GET'])
 def get_positions():
@@ -313,12 +345,13 @@ def check_duplicate_visitor():
 
 @app.route('/mobile-register')
 def mobile_register():
+    print(f"Serving mobile register page from {get_prefix()}")  # 디버그 로그
     return render_template('mobile-register.html')
 
 @app.route('/qr')
 def qr_code():
-    # QR 코드 생성 페이지
-    mobile_url = request.host_url + "mobile-register"
+    mobile_url = request.host_url.rstrip('/') + url_for('mobile_register')
+    print(f"QR code URL: {mobile_url}")  # 디버그 로그
     return render_template('qr.html', mobile_url=mobile_url)
 
 @app.route('/api/sse')
@@ -360,6 +393,76 @@ def get_cached_visitors():
 @app.route('/static/images/<path:filename>')
 def serve_image(filename):
     return send_from_directory('static/images', filename)
+
+@app.route('/api/db-test')
+def test_db():
+    try:
+        # 데이터베이스 연결 테스트
+        conn = db.get_connection()
+        cursor = conn.cursor()
+        
+        # 테이블 존재 확인
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        tables = cursor.fetchall()
+        
+        # 방문자 수 확인
+        cursor.execute("SELECT COUNT(*) FROM visitors")
+        visitor_count = cursor.fetchone()[0]
+        
+        conn.close()
+        
+        return jsonify({
+            'status': 'success',
+            'tables': tables,
+            'visitor_count': visitor_count,
+            'db_path': db.db_path
+        })
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'error': str(e),
+            'db_path': db.db_path
+        }), 500
+
+# 정적 파일 처리
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('static', filename)
+
+@app.route('/visit/debug/db-test')
+def test_db_connection():
+    try:
+        # 데이터베이스 파일 존재 확인
+        print(f"DB Path: {db.db_path}")
+        print(f"DB File exists: {os.path.exists(db.db_path)}")
+        
+        # 테이블 목록 조회
+        conn = db.get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        tables = cursor.fetchall()
+        
+        # 각 테이블의 레코드 수 확인
+        table_counts = {}
+        for table in tables:
+            cursor.execute(f"SELECT COUNT(*) FROM {table[0]}")
+            count = cursor.fetchone()[0]
+            table_counts[table[0]] = count
+        
+        conn.close()
+        
+        return jsonify({
+            'status': 'success',
+            'db_path': db.db_path,
+            'tables': [t[0] for t in tables],
+            'record_counts': table_counts
+        })
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'error': str(e),
+            'db_path': db.db_path
+        }), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

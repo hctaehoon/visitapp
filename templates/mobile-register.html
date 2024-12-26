@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ASDMT 방문자 등록</title>
-    <link rel="stylesheet" href="/static/mobile-style.css">
+    <link rel="stylesheet" href="/visit/static/mobile-style.css">
 </head>
 <body>
     <div class="container">
         <header class="site-header">
-            <img src="/static/images/dmt_logo.png" alt="DMT Logo" class="logo">
+            <img src="/visit/static/images/dmt_logo.png" alt="DMT Logo" class="logo">
             <h1>ASDMT 방문자 등록(모바일)</h1>
         </header>
         <form id="mobileVisitorForm">
@@ -48,6 +48,6 @@
             <button type="submit">등록</button>
         </form>
     </div>
-    <script src="/static/mobile-app.js"></script>
+    <script src="{{ url_for('static', filename='mobile-app.js') }}"></script>
 </body>
 </html> 
