@@ -54,7 +54,8 @@ document.addEventListener('DOMContentLoaded', function() {
             showErrorModal('핸드폰 번호는 11자리 숫자로 입력해주세요.');
             return;
         }
-	        // 직접 입력 값 처리를 위한 함수
+        
+        // 직접 입력 값 처리를 위한 함수
         const getFieldValue = (selectId, inputId) => {
             const select = document.getElementById(selectId);
             const input = document.getElementById(inputId);
@@ -70,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
             visit_purpose: getFieldValue('visit_purpose', 'purposeInput'),
             manager: document.getElementById('manager').value
         };
+
         try {
             const checkResponse = await fetch('/visit/api/visitors/check-duplicate', {
                 method: 'POST',
@@ -135,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 업체 추가 기능 설정
     setupCompanyAdd();
     
-    // 직접 입력 처리
+    // 직접 ���력 처리
     setupManualInputs();
     
     // 담당자 검색 기능
@@ -219,7 +221,7 @@ async function loadCurrentVisitors() {
         
         updateVisitorsTable(visitors, today);
 
- 	// 현재 입실 인원 현황 업데이트
+ 	// 현재 입실 인원 현황 업데이��
 	const currentVisitors = visitors.filter(v => !v[9]); // 퇴실하지 않은 방문자만
         updateCurrentVisitorStatus(currentVisitors);
                 // 통계 업데이트 (새로 추가)
@@ -547,12 +549,13 @@ function setupManualInputs() {
         listButton.style.display = 'none';
         container.appendChild(listButton);
 
-        // 직접 입력 드로 전환
+        // 직접 입력 모드로 전환
         manualButton.addEventListener('click', function() {
             select.style.display = 'none';
             input.style.display = 'block';
             input.required = true;
             select.required = false;
+            select.value = '';  // select 값을 비움
             input.value = '';
             input.focus();
             manualButton.style.display = 'none';
@@ -565,9 +568,17 @@ function setupManualInputs() {
             select.style.display = 'block';
             select.required = true;
             input.required = false;
+            input.value = '';  // input 값을 비움
             select.value = '';
             listButton.style.display = 'none';
             manualButton.style.display = 'block';
+        });
+
+        // select가 변경될 때 input 값 비우기
+        select.addEventListener('change', function() {
+            if (this.value !== 'manual') {
+                input.value = '';
+            }
         });
     });
 }
@@ -828,14 +839,10 @@ function showDuplicateVisitorModal(existingVisitor, newVisitorData) {
 // 퇴실 누락 목록 로드 함수 추가
 async function loadMissedCheckouts() {
     try {
-	const tbody = document.getElementById('missedCheckoutsList');
-	if (!tbody) {
-	   console.log('Missed checkouts table not found in current view');
-	   return;
-	}
         const response = await fetch('/visit/api/missed-checkouts');
         const missedCheckouts = await response.json();
         
+        const tbody = document.getElementById('missedCheckoutsList');
         tbody.innerHTML = missedCheckouts.map(checkout => `
             <tr>
                 <td>${checkout[1]}</td>
@@ -947,13 +954,9 @@ function setupSSE() {
     if (window.eventSource) {
         window.eventSource.close();
     }
-    console.log('Setting up new SSE connection'); 
+    
     window.eventSource = new EventSource('/visit/api/sse');
     
-    window.eventSource.onopen = function(event) {
-	    console.log('SSE connection opend');
-    };
-
     window.eventSource.onmessage = function(event) {
         const visitors = JSON.parse(event.data);
         debouncedUpdate(visitors);
