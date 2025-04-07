@@ -231,14 +231,14 @@ async function loadCurrentVisitors() {
     }
 }
 
+
 function updateVisitorsTable(visitors, selectedDate = new Date()) {
     const tbody = document.getElementById('currentVisitorsList');
     let html = '';
     
-    // 10개의 빈 행 생성
-    for(let i = 0; i < 10; i++) {
-        if (i < visitors.length) {
-            const visitor = visitors[i];
+    // 실제 방문자 수만큼 행 생성
+    if (visitors.length > 0) {
+        visitors.forEach(visitor => {
             html += `
                 <tr>
                     <td>${visitor[2]}</td>
@@ -254,19 +254,14 @@ function updateVisitorsTable(visitors, selectedDate = new Date()) {
                     </td>
                 </tr>
             `;
-        } else {
-            html += `
-                <tr>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                </tr>
-            `;
-        }
+        });
+    } else {
+        // 방문자가 없을 경우 빈 행 하나만 표시
+        html = `
+            <tr>
+                <td colspan="7" style="text-align: center;">방문자가 없습니다.</td>
+            </tr>
+        `;
     }
     
     tbody.innerHTML = html;
@@ -279,6 +274,9 @@ function updateVisitorsTable(visitors, selectedDate = new Date()) {
         updateVisitPurposeRanking();
     }
 }
+
+
+
 // 날짜 변경 함수
 function setupDateChangeDetection() {
     let currentDate = new Date().toDateString();
