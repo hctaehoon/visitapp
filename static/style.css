@@ -732,3 +732,338 @@ input[type="tel"]:invalid:not(:placeholder-shown)::after {
         opacity: 1;
     }
 }
+
+/* 이름 익명화 블러 애니메이션 */
+.name-display {
+    display: inline-flex;
+    align-items: center;
+}
+
+.name-visible {
+    font-weight: 500;
+}
+
+.name-masked {
+    position: relative;
+    display: inline-block;
+    margin-left: 2px;
+    color: transparent;
+    background: linear-gradient(90deg,
+        rgba(0, 82, 204, 0.15) 0%,
+        rgba(0, 82, 204, 0.25) 50%,
+        rgba(0, 82, 204, 0.15) 100%);
+    background-size: 200% 100%;
+    border-radius: 4px;
+    padding: 0 6px;
+    animation: shimmer 2.5s ease-in-out infinite;
+    filter: blur(3px);
+    letter-spacing: 1px;
+    user-select: none;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+        filter: blur(3px);
+    }
+    50% {
+        background-position: 200% 0;
+        filter: blur(2px);
+    }
+    100% {
+        background-position: -200% 0;
+        filter: blur(3px);
+    }
+}
+
+/* 현대적인 UI 업그레이드 */
+:root {
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.12);
+    --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.15);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 헤더 업그레이드 */
+.site-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: var(--shadow-md);
+    padding: 20px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.site-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent);
+    animation: headerShine 3s ease-in-out infinite;
+}
+
+@keyframes headerShine {
+    0%, 100% { left: -100%; }
+    50% { left: 100%; }
+}
+
+.header-content h1 {
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-size: 26px;
+}
+
+/* 패널 업그레이드 */
+.left-panel, .right-panel {
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: var(--transition-smooth);
+}
+
+.left-panel:hover, .right-panel:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+/* 폼 섹션 업그레이드 */
+.form-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.form-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+}
+
+.form-section h2 {
+    position: relative;
+    padding-left: 12px;
+}
+
+.form-section h2::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 20px;
+    background: linear-gradient(180deg, var(--primary), var(--secondary));
+    border-radius: 2px;
+}
+
+/* 입력 필드 업그레이드 */
+input, select {
+    transition: var(--transition-smooth);
+    border: 2px solid var(--border);
+}
+
+input:hover, select:hover {
+    border-color: rgba(0, 82, 204, 0.3);
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(0, 82, 204, 0.1);
+    transform: translateY(-1px);
+}
+
+/* 버튼 업그레이드 */
+button {
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition-smooth);
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+button:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* 테이블 업그레이드 */
+.table-container {
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-smooth);
+}
+
+.table-container:hover {
+    box-shadow: var(--shadow-md);
+}
+
+table tbody tr {
+    transition: var(--transition-smooth);
+}
+
+table tbody tr:hover {
+    background: linear-gradient(90deg,
+        rgba(0, 82, 204, 0.03) 0%,
+        rgba(0, 82, 204, 0.06) 50%,
+        rgba(0, 82, 204, 0.03) 100%);
+    transform: scale(1.01);
+}
+
+/* 방문자 카드 업그레이드 */
+.visitor-card {
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(249, 250, 251, 1) 100%);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.visitor-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--primary), var(--secondary));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.visitor-card:hover::before {
+    opacity: 1;
+}
+
+.visitor-card:hover {
+    transform: translateX(4px);
+    box-shadow: var(--shadow-md);
+}
+
+/* 통계 카드 업그레이드 */
+.analytics-card {
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(249, 250, 251, 1) 100%);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.analytics-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle,
+        rgba(0, 82, 204, 0.05) 0%,
+        transparent 70%);
+    transition: var(--transition-smooth);
+}
+
+.analytics-card:hover::after {
+    top: -25%;
+    right: -25%;
+}
+
+/* 현재 상태 섹션 업그레이드 */
+.current-status {
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(249, 250, 251, 1) 100%);
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.status-header {
+    background: linear-gradient(90deg,
+        rgba(0, 82, 204, 0.05) 0%,
+        transparent 100%);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+}
+
+#currentVisitorCount {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* 검색 박스 업그레이드 */
+.search-box input {
+    transition: var(--transition-smooth);
+    border: 2px solid var(--border);
+}
+
+.search-box input:focus {
+    box-shadow: 0 0 0 4px rgba(0, 82, 204, 0.1);
+    border-color: var(--primary);
+}
+
+/* 달력 섹션 업그레이드 */
+.calendar-section {
+    background: var(--surface);
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-smooth);
+}
+
+.calendar-section:hover {
+    box-shadow: var(--shadow-md);
+}
+
+/* 날짜 컨트롤 업그레이드 */
+.date-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.date-picker-wrapper {
+    flex: 1;
+    position: relative;
+}
+
+.date-picker-wrapper input {
+    padding-left: 40px;
+}
+
+.calendar-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    pointer-events: none;
+    z-index: 1;
+}

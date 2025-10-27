@@ -71,11 +71,17 @@ def get_prefix():
     return app.config['APPLICATION_ROOT']
 
 @app.route('/')
+def root():
+    from flask import redirect
+    return redirect('/visit/')
+
+@app.route('/visit')
+@app.route('/visit/')
 def index():
     print(f"Serving index page from {get_prefix()}")  # 디버그 로그
     return render_template('index.html')
 
-@app.route('/api/visitors', methods=['POST'])
+@app.route('/visit/api/visitors', methods=['POST'])
 def add_visitor():
     data = request.json
     if not data:
@@ -116,12 +122,12 @@ def add_visitor():
     update_visitors(visitors)  # 변경 시에만 알림
     return jsonify({'id': visitor_id}), 201
 
-@app.route('/api/visitors/<int:visitor_id>/checkout', methods=['POST'])
+@app.route('/visit/api/visitors/<int:visitor_id>/checkout', methods=['POST'])
 def checkout_visitor(visitor_id):
     db.check_out_visitor(visitor_id)
     return jsonify({'status': 'success'}), 200
 
-@app.route('/api/current-visitors', methods=['GET'])
+@app.route('/visit/api/current-visitors', methods=['GET'])
 def get_current_visitors():
     try:
         visitors = db.get_current_visitors()
@@ -131,17 +137,17 @@ def get_current_visitors():
         print(f"Error getting visitors: {e}")  # 에러 로그
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/stats/managers', methods=['GET'])
+@app.route('/visit/api/stats/managers', methods=['GET'])
 def get_manager_stats():
     stats = db.get_manager_stats()
     return jsonify(stats)
 
-@app.route('/api/stats/companies', methods=['GET'])
+@app.route('/visit/api/stats/companies', methods=['GET'])
 def get_company_stats():
     stats = db.get_company_stats()
     return jsonify(stats)
 
-@app.route('/api/visitors/<date>', methods=['GET'])
+@app.route('/visit/api/visitors/<date>', methods=['GET'])
 def get_visitors_by_date(date):
     try:
         # 날짜 형식 검증
@@ -155,7 +161,7 @@ def get_visitors_by_date(date):
         print(f"Error getting visitors for {date}: {e}")  # 에러 로그
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/export/<int:year>/<int:month>', methods=['GET'])
+@app.route('/visit/api/export/<int:year>/<int:month>', methods=['GET'])
 def export_excel(year, month):
     visitors = db.get_visitors_by_month(year, month)
     missed_checkouts = db.get_missed_checkouts_by_month(year, month)
@@ -227,17 +233,17 @@ def export_excel(year, month):
         download_name=f'방문기록_{year}_{month}.xlsx'
     )
 
-@app.route('/api/analytics/companies', methods=['GET'])
+@app.route('/visit/api/analytics/companies', methods=['GET'])
 def get_company_analytics():
     analytics = db.get_company_analytics()
     return jsonify(analytics)
 
-@app.route('/api/analytics/purposes', methods=['GET'])
+@app.route('/visit/api/analytics/purposes', methods=['GET'])
 def get_purpose_ranking():
     ranking = db.get_purpose_ranking()
     return jsonify(ranking)
 
-@app.route('/api/options/companies', methods=['GET'])
+@app.route('/visit/api/options/companies', methods=['GET'])
 def get_companies():
     try:
         companies = db.get_companies()
@@ -247,42 +253,42 @@ def get_companies():
         print(f"Error in companies API: {str(e)}")  # 에러 로그
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/options/positions', methods=['GET'])
+@app.route('/visit/api/options/positions', methods=['GET'])
 def get_positions():
     return jsonify(db.get_positions())
 
-@app.route('/api/options/locations', methods=['GET'])
+@app.route('/visit/api/options/locations', methods=['GET'])
 def get_locations():
     return jsonify(db.get_locations())
 
-@app.route('/api/options/departments', methods=['GET'])
+@app.route('/visit/api/options/departments', methods=['GET'])
 def get_departments():
     departments = db.get_departments()
     print("Departments:", departments)
     return jsonify(departments)
 
-@app.route('/api/managers/search', methods=['GET'])
+@app.route('/visit/api/managers/search', methods=['GET'])
 def search_managers():
     query = request.args.get('q', '')
     return jsonify(db.search_managers(query))
 
-@app.route('/api/managers/department/<int:dept_id>', methods=['GET'])
+@app.route('/visit/api/managers/department/<int:dept_id>', methods=['GET'])
 def get_managers_by_department(dept_id):
     managers = db.get_managers_by_department(dept_id)
     print(f"Managers for department {dept_id}:", managers)
     return jsonify(managers)
 
-@app.route('/api/visitor-history', methods=['GET'])
+@app.route('/visit/api/visitor-history', methods=['GET'])
 def get_visitor_history():
     company = request.args.get('company')
     name = request.args.get('name')
     return jsonify(db.get_visitor_history(company, name))
 
-@app.route('/api/options/purposes', methods=['GET'])
+@app.route('/visit/api/options/purposes', methods=['GET'])
 def get_visit_purposes():
     return jsonify(db.get_visit_purposes())
 
-@app.route('/api/options/companies', methods=['POST'])
+@app.route('/visit/api/options/companies', methods=['POST'])
 def add_company():
     data = request.json
     success, message = db.add_company(data['name'])
@@ -291,17 +297,17 @@ def add_company():
     else:
         return jsonify({'status': 'error', 'message': message}), 400
 
-@app.route('/api/missed-checkouts', methods=['GET'])
+@app.route('/visit/api/missed-checkouts', methods=['GET'])
 def get_missed_checkouts():
     return jsonify(db.get_missed_checkouts())
 
-@app.route('/api/visitors/<int:visitor_id>/missed-checkout', methods=['POST'])
+@app.route('/visit/api/visitors/<int:visitor_id>/missed-checkout', methods=['POST'])
 def mark_missed_checkout(visitor_id):
     data = request.json
     db.add_missed_checkout(visitor_id, data['original_date'], data['reason'])
     return jsonify({'status': 'success'}), 200
 
-@app.route('/api/visitors/check-duplicate', methods=['POST'])
+@app.route('/visit/api/visitors/check-duplicate', methods=['POST'])
 def check_duplicate_visitor():
     data = request.json
     print(f"Checking duplicate for: {data}")  # 디버그 로그
@@ -343,25 +349,25 @@ def check_duplicate_visitor():
     finally:
         conn.close()
 
-@app.route('/mobile-register')
+@app.route('/visit/mobile-register')
 def mobile_register():
     print(f"Serving mobile register page from {get_prefix()}")  # 디버그 로그
     return render_template('mobile-register.html')
 
-@app.route('/qr')
+@app.route('/visit/qr')
 def qr_code():
     mobile_url = request.host_url.rstrip('/') + url_for('mobile_register')
     print(f"QR code URL: {mobile_url}")  # 디버그 로그
     return render_template('qr.html', mobile_url=mobile_url)
 
-@app.route('/api/sse')
+@app.route('/visit/api/sse')
 def sse():
     client_id = request.remote_addr
     queue = Queue()
-    
+
     with client_lock:
         clients[client_id].append(queue)
-    
+
     def generate():
         try:
             while True:
@@ -374,7 +380,7 @@ def sse():
                 clients[client_id].remove(queue)
                 if not clients[client_id]:
                     del clients[client_id]
-    
+
     return Response(generate(), mimetype='text/event-stream')
 
 # 데이터 변경 시에만 알림
@@ -390,11 +396,11 @@ def get_cached_visitors():
     return visitors_cache[cache_key]
 
 # 이미지 파일 서빙을 위한 라우트 추가
-@app.route('/static/images/<path:filename>')
+@app.route('/visit/static/images/<path:filename>')
 def serve_image(filename):
     return send_from_directory('static/images', filename)
 
-@app.route('/api/db-test')
+@app.route('/visit/api/db-test')
 def test_db():
     try:
         # 데이터베이스 연결 테스트
@@ -425,7 +431,7 @@ def test_db():
         }), 500
 
 # 정적 파일 처리
-@app.route('/static/<path:filename>')
+@app.route('/visit/static/<path:filename>')
 def serve_static(filename):
     return send_from_directory('static', filename)
 
@@ -465,4 +471,5 @@ def test_db_connection():
         }), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # 개발 환경에서만 실행 (서버에서는 Gunicorn 사용)
+    app.run(debug=True, host='0.0.0.0', port=5000)

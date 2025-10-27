@@ -1,9 +1,12 @@
 import sqlite3
 from datetime import datetime, timedelta
+import os
 
 class VisitorDB:
     def __init__(self):
-        self.db_path = '/var/www/visitapp/visitor_log.db'
+        # Windows/Linux 호환 경로 - 현재 파일 위치 기준
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        self.db_path = os.path.join(current_dir, 'visitor_log.db')
         self.create_tables()
 
     def get_connection(self):

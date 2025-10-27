@@ -235,21 +235,21 @@ async function loadCurrentVisitors() {
 function updateVisitorsTable(visitors, selectedDate = new Date()) {
     const tbody = document.getElementById('currentVisitorsList');
     let html = '';
-    
+
     // 실제 방문자 수만큼 행 생성
     if (visitors.length > 0) {
         visitors.forEach(visitor => {
             html += `
                 <tr>
                     <td>${visitor[2]}</td>
-                    <td>${visitor[3]}</td>
+                    <td>${anonymizeName(visitor[3])}</td>
                     <td>${visitor[6]}</td>
                     <td>${visitor[10]}</td>
                     <td>${visitor[8]}</td>
                     <td>${visitor[9] || '-'}</td>
                     <td>
-                        ${!visitor[9] && isSameDay(new Date(visitor[1]), new Date()) ? 
-                            `<button class="checkout-btn" onclick="checkoutVisitor(${visitor[0]})">퇴실</button>` : 
+                        ${!visitor[9] && isSameDay(new Date(visitor[1]), new Date()) ?
+                            `<button class="checkout-btn" onclick="checkoutVisitor(${visitor[0]})">퇴실</button>` :
                             (visitor[9] ? `<button class="completed-btn" disabled>퇴실완료</button>` : '-')}
                     </td>
                 </tr>
@@ -263,9 +263,9 @@ function updateVisitorsTable(visitors, selectedDate = new Date()) {
             </tr>
         `;
     }
-    
+
     tbody.innerHTML = html;
-    
+
     // 현재 상태 업데이트 (현재 입실한 방문자만 표시)
     if (isSameDay(selectedDate, new Date())) {
         const currentVisitors = visitors.filter(v => !v[9]);  // 퇴실시간이 없는 방문자만
@@ -340,8 +340,8 @@ function updateCurrentVisitorStatus(currentVisitors) {
         return `
             <div class="visitor-card">
                 <div class="visitor-info">
-                    <strong>${visitor[2]}</strong> - 
-                    ${visitor[3]}
+                    <strong>${visitor[2]}</strong> -
+                    ${anonymizeName(visitor[3])}
                     <span class="position">(${visitor[4] || '-'})</span>
                 </div>
                 <div class="visit-details">
@@ -1014,6 +1014,19 @@ const debouncedUpdate = debounce((visitors) => {
 function isValidPhoneNumber(phone) {
     const phoneRegex = /^01[0-9]{9}$/;  // 010, 011, 016, 017, 018, 019로 시작하는 11자리 숫자
     return phoneRegex.test(phone);
+}
+
+// 이름 익명화 함수 (블러 애니메이션 포함)
+function anonymizeName(fullName) {
+    if (!fullName || fullName.length === 0) return '';
+
+    const firstName = fullName.charAt(0);
+    const restLength = fullName.length - 1;
+    const maskedPart = 'x'.repeat(restLength);
+
+    return `<span class="name-display">
+        <span class="name-visible">${firstName}</span><span class="name-masked">${maskedPart}</span>
+    </span>`;
 }
 
 // 연락처 입력 필드 이벤트 리스너
