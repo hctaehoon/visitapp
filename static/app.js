@@ -353,7 +353,9 @@ function updateCurrentVisitorStatus(currentVisitors) {
     }).join('');
 }
 
+
 // 업체별 통계 업데이트 함수 수정
+/*
 async function updateCompanyAnalytics() {
     try {
         const response = await fetch('/visit/api/analytics/companies');
@@ -386,7 +388,44 @@ async function updateCompanyAnalytics() {
     } catch (error) {
         console.error('Error:', error);
     }
+} */
+
+// 업체별 통계 업데이트 함수 수정
+async function updateCompanyAnalytics() {
+    try {
+        const response = await fetch('/visit/api/analytics/companies');
+        const companies = await response.json();
+
+        const analyticsContainer = document.getElementById('companyAnalytics');
+        analyticsContainer.innerHTML = companies.map(company => {
+            const totalMinutes = company[3] ? Math.round(company[3] / 60) : 0;
+
+            // 최장 체류 시간 계산
+            const longestMinutes = company[6] ? Math.round(company[6] / 60) : 0;
+
+            const longestVisitorInfo = company[4] ? `
+                <div class="longest-visitor">
+                    <div class="visitor-name">최장 체류: 방문자</div>
+                    <div class="visitor-duration">(${formatDuration(longestMinutes)})</div>
+                </div>
+            ` : '';
+
+            return `
+                <div class="analytics-card">
+                    <div class="company-name">${company[0]}</div>
+                    <div class="visit-count">총 방문: ${company[1]}회</div>
+                    <div class="current-visitors">현재 방문: ${company[2] || 0}명</div>
+                    <div class="total-duration">누적 체류: ${formatDuration(totalMinutes)}</div>
+                    ${longestVisitorInfo}
+                </div>
+            `;
+        }).join('');
+    } catch (error) {
+        console.error('Error:', error);
+    }
 }
+
+
 
 async function updateVisitPurposeRanking() {
     try {
